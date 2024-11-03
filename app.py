@@ -1,9 +1,19 @@
-from flask import Flask, jsonify, abort, request
+import os
+from flask import Flask, jsonify, abort, request, url_for, redirect
 from flask_mysqldb import MySQL
+from werkzeug.utils import secure_filename
 import jwt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret_key'
+app.config['extentions'] = ['.jpg','.pdf','.png']
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 #limiting the size of uploaded files
+app.config['UPLOAD_PATH'] = 'uploads'
+
+# Checking to see if the folder exists
+if not os.path.exists(app.config['UPLOAD_PATH']):
+    os.makedirs(app.config['UPLOAD_PATH'])
+
 #  @app.route('/')
 
 # Error Handling
@@ -62,5 +72,29 @@ def protected():
         return jsonify({'message': f'Welcome, {data['username']}!'})
     except:
         return abort(404)
+
+# File Handling 
+
+#upload file
+@app.route('/upload')
+def upload():
+    return '''
+        <html>
+        <form action="/sendFile" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file"/><br>
+            <input type="submit"/>
+        </form>
+        </html>
+    '''
+
+@app.route('/sendFile', methods=['POST', 'GET'])
+def sendFile():
+    uploaded_file = request.files['file']
+    if uploaded_file.filename != '':
+        filename = secure_filename(uploaded_file.filename)
+        if os.path.splitext(filename)[1] in app.config['extensions']:
+            uploaded_file.save(os.path.join(app.config['UPLOADS'],filename))
+            return 'correct'
+    return ''
 if __name__ == '__main__':
     app.run(debug=True)
