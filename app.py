@@ -38,7 +38,7 @@ def home():
 @app.route('/public', methods=['GET'])
 def public_view():
     cursor = mysql.connection.cursor()
-    query = "SELECT id, usernamen FROM users"
+    query = "SELECT id, username FROM users"
     cursor.execute(query)
     users = cursor.fetchall()
     cursor.close()
@@ -124,7 +124,8 @@ def login():
             )
             return jsonify({
                 'message': f'Welcome, {username}! You have successfully logged in.',
-                'token': token
+                'token': token,
+                'upload_url': url_for('sendFile', _external=True)
             })
         else:
             return jsonify({'message': 'Invalid credentials!'}), 401
@@ -144,7 +145,7 @@ def protected():
 
     try:
         data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-        return jsonify({'message': f'Welcome, {data['username']}!'})
+        return jsonify({'message': f"Welcome, {data['username']}!"})
     except jwt.ExpiredSignatureError:
         return jsonify({'message': 'Token has expired'}), 401
     except jwt.InvalidTokenError:
@@ -155,24 +156,29 @@ if __name__ == '__main__':
     
 # File Handling 
 
-# #upload file
-# @app.route('/upload')
-# def upload():
-#     return '''
-#         <html>
-#         <form action="/sendFile" method="POST" enctype="multipart/form-data">
-#             <input type="file" name="file"/><br>
-#             <input type="submit"/>
-#         </form>
-#         </html>
-#     '''
+#upload file
+@app.route('/upload')
+def upload():
+    return '''
+        <html>
+        <form action="/sendFile" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file"/><br>
+            <input type="submit"/>
+        </form>
+        </html>
+    '''
 
-# @app.route('/sendFile', methods=['POST', 'GET'])
-# def sendFile():
-#     uploaded_file = request.files['file']
-#     if uploaded_file.filename != '':
-#         filename = secure_filename(uploaded_file.filename)
-#         if os.path.splitext(filename)[1] in app.config['extensions']:
-#             uploaded_file.save(os.path.join(app.config['UPLOADS'],filename))
-#             return 'correct'
-#     return ''
+@app.route('/sendFile', methods=['POST'])
+def sendFile():
+    uploaded_file = request.files.get('file')
+    if not uploaded_file:
+        return jsonify({'error': 'No file provided'}), 400
+
+    filename = secure_filename(uploaded_file.filename)
+    if not filename or os.path.splitext(filename)[1].lower() not in app.config['extensions']:
+        return jsonify({'error': 'Invalid file extension'}), 400
+
+    upload_path = os.path.join(app.config['UPLOAD_PATH'], filename)
+    uploaded_file.save(upload_path)
+    return jsonify({'message': 'File uploaded successfully', 'filename': filename}), 201
+
