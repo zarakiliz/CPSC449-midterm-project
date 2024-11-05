@@ -14,7 +14,8 @@ error handling, authentication, and file handling
 
 ## How to Setup
 1. **Clone the Repository**
-   ```git clone https://github.com/zarakiliz/CPSC449-midterm-project
+   ```bash 
+   git clone https://github.com/zarakiliz/CPSC449-midterm-project
    cd CPSC449-midterm-project
 
 2. **Create a Virtual Enviornment**
