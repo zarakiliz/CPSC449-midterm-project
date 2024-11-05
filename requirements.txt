@@ -1,0 +1,5 @@
+Flask
+Flask-MySQLdb
+PyJWT
+python-dotenv
+Werkzeug

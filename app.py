@@ -141,7 +141,7 @@ def protected():
 
     try:
         data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-        return jsonify({'message': f'Welcome, {data['username']}!'})
+        return jsonify({'message': f"Welcome, {data['username']}!"})
     except jwt.ExpiredSignatureError:
         return jsonify({'message': 'Token has expired'}), 401
     except jwt.InvalidTokenError:
@@ -151,24 +151,24 @@ if __name__ == '__main__':
     
 # File Handling 
 
-# #upload file
-# @app.route('/upload')
-# def upload():
-#     return '''
-#         <html>
-#         <form action="/sendFile" method="POST" enctype="multipart/form-data">
-#             <input type="file" name="file"/><br>
-#             <input type="submit"/>
-#         </form>
-#         </html>
-#     '''
+#upload file
+@app.route('/upload')
+def upload():
+    return '''
+        <html>
+        <form action="/sendFile" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file"/><br>
+            <input type="submit"/>
+        </form>
+        </html>
+    '''
 
-# @app.route('/sendFile', methods=['POST', 'GET'])
-# def sendFile():
-#     uploaded_file = request.files['file']
-#     if uploaded_file.filename != '':
-#         filename = secure_filename(uploaded_file.filename)
-#         if os.path.splitext(filename)[1] in app.config['extensions']:
-#             uploaded_file.save(os.path.join(app.config['UPLOADS'],filename))
-#             return 'correct'
-#     return ''
+@app.route('/sendFile', methods=['POST', 'GET'])
+def sendFile():
+    uploaded_file = request.files['file']
+    if uploaded_file.filename != '':
+        filename = secure_filename(uploaded_file.filename)
+        if os.path.splitext(filename)[1] in app.config['extensions']:
+            uploaded_file.save(os.path.join(app.config['UPLOADS'],filename))
+            return 'correct'
+    return ''
