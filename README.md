@@ -14,8 +14,7 @@ error handling, authentication, and file handling
 
 ## How to Setup
 1. **Clone the Repository**
-   - bash
-   git clone https://github.com/zarakiliz/CPSC449-midterm-project
+   ```git clone https://github.com/zarakiliz/CPSC449-midterm-project
    cd CPSC449-midterm-project
 
 2. **Create a Virtual Enviornment**
@@ -36,9 +35,9 @@ error handling, authentication, and file handling
 5. **Set up MYSQL Database**
     - Start your MySQL server and create a database.
 
-    CREATE DATABASE CPSC449-midterm-project
+        CREATE DATABASE CPSC449-midterm-project
 
-    Update the .env file to match your MySQL credentials
+    - Update the .env file to match your   MySQL credentials
 
 6. **Run the Application**
    - flask run
