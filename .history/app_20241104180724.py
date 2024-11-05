@@ -4,7 +4,6 @@ from flask_mysqldb import MySQL
 from werkzeug.utils import secure_filename
 import jwt
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
 
 # To load the ennvrionment variables from the .env file
 load_dotenv()
@@ -148,7 +147,6 @@ def protected():
         return jsonify({'message': 'Invalid token'}), 401
 if __name__ == '__main__':
     app.run(debug=True)
-    
 # File Handling 
 
 # #upload file
