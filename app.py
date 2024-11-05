@@ -38,12 +38,14 @@ def home():
 @app.route('/public', methods=['GET'])
 def public_view():
     cursor = mysql.connection.cursor()
-    query = "SELECT id, usernamen FROM users"
+    query = "SELECT id, username FROM users"
     cursor.execute(query)
     users = cursor.fetchall()
     cursor.close()
-    return jsonify(users)
-
+    return jsonify({
+        'users': users,
+        'upload_url': url_for('sendFile', _external=True)
+    })
 #error 400
 @app.errorhandler(400)
 def bad_request(e):
@@ -123,7 +125,8 @@ def login():
             )
             return jsonify({
                 'message': f'Welcome, {username}! You have successfully logged in.',
-                'token': token
+                'token': token,
+                'upload_url': url_for('sendFile', _external=True)
             })
         else:
             return jsonify({'message': 'Invalid credentials!'}), 401
@@ -163,12 +166,17 @@ def upload():
         </html>
     '''
 
-@app.route('/sendFile', methods=['POST', 'GET'])
+@app.route('/sendFile', methods=['POST'])
 def sendFile():
-    uploaded_file = request.files['file']
-    if uploaded_file.filename != '':
-        filename = secure_filename(uploaded_file.filename)
-        if os.path.splitext(filename)[1] in app.config['extensions']:
-            uploaded_file.save(os.path.join(app.config['UPLOADS'],filename))
-            return 'correct'
-    return ''
+    uploaded_file = request.files.get('file')
+    if not uploaded_file:
+        return jsonify({'error': 'No file provided'}), 400
+
+    filename = secure_filename(uploaded_file.filename)
+    if not filename or os.path.splitext(filename)[1].lower() not in app.config['extensions']:
+        return jsonify({'error': 'Invalid file extension'}), 400
+
+    upload_path = os.path.join(app.config['UPLOAD_PATH'], filename)
+    uploaded_file.save(upload_path)
+    return jsonify({'message': 'File uploaded successfully', 'filename': filename}), 201
+
