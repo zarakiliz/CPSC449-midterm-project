@@ -19,12 +19,12 @@ error handling, authentication, and file handling
    cd CPSC449-midterm-project
 
 2. **Create a Virtual Enviornment**
-   ``` python3 -m venv venv
+   ```python3 -m venv venv
     source venv/bin/activate    
     On Windows, use `venv\Scripts\activate`
 
 3. **Install Dependencies**
-    ``` pip install -r requirements.txt
+    ```pip install -r requirements.txt
 
 4.  **Environment Variables** 
     ```Create a .env file in the project root with the following entries: 
@@ -41,5 +41,5 @@ error handling, authentication, and file handling
     Update the .env file to match your MySQL credentials
 
 6. **Run the Application**
-   ``` flask run
+   ```flask run
 
