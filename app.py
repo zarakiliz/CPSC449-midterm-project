@@ -42,10 +42,8 @@ def public_view():
     cursor.execute(query)
     users = cursor.fetchall()
     cursor.close()
-    return jsonify({
-        'users': users,
-        'upload_url': url_for('sendFile', _external=True)
-    })
+    return jsonify(users)
+
 #error 400
 @app.errorhandler(400)
 def bad_request(e):
