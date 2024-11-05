@@ -95,7 +95,7 @@ def login():
         '''
     
     elif request.method == 'POST':
-        # Checking if JSON data is provided 
+        # Checking 
         # Retrieve credentials from the form
         username = request.form.get('username')
         password = request.form.get('password')
@@ -129,8 +129,6 @@ def login():
         else:
             return jsonify({'message': 'Invalid credentials!'}), 401
 
-
-#Confirmed via PostMan JWT Bearer Token Works
 # protected endpoint that requires a valid jwt token to access
 @app.route('/protected', methods=['GET'])
 def protected():

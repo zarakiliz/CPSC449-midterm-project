@@ -130,7 +130,7 @@ def login():
             return jsonify({'message': 'Invalid credentials!'}), 401
 
 
-#Confirmed via PostMan JWT Bearer Token Works
+#Confirmed via PostMan JWT 
 # protected endpoint that requires a valid jwt token to access
 @app.route('/protected', methods=['GET'])
 def protected():
