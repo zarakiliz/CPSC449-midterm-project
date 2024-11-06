@@ -206,7 +206,8 @@ def login():
 def protected():
 
     # Release in order to access proctected, we can do either through POSTMAN or through the endpoint via cookie
-    token = request.cookies.get('token') or request.headers.get('Authorization')
+    # token = request.cookies.get('token') or request.headers.get('Authorization')\
+    token = request.headers.get('Authorization')
     if not token:
         return jsonify({'message': 'Token is missing.'}), 401
     # token = request. headers.get('Authorization')
