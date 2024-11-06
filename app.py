@@ -93,7 +93,7 @@ def upLoadFile():
         uploaded_file.save(upload_path)
         return jsonify({'message': 'File uploaded successfully', 'filename': filename}), 201
     
-    #Logic to access via Endpoint via Flask
+    #Logic to access via Endpoint through the URL
     elif request.method == 'GET':
         #Listing all of the files in 'uploads' folder in root directory
         if not os.path.exists(app.config['UPLOAD_PATH']) or not os.listdir(app.config['UPLOAD_PATH']):
@@ -151,8 +151,10 @@ def login():
     elif request.method == 'POST':
         # Checking if JSON data is provided 
         # Retrieve credentials from the form
-        username = request.form.get('username')
-        password = request.form.get('password')
+        # Forgot to test for POST 
+        data = request.json
+        username = data.get('username')
+        password = data.get('password')
 
         # Validate that username and password are provided
         if not username or not password:
