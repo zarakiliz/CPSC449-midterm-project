@@ -148,7 +148,6 @@ def protected():
         return jsonify({'message': 'Invalid token'}), 401
 if __name__ == '__main__':
     app.run(debug=True)
-    
 # File Handling 
 
 # #upload file

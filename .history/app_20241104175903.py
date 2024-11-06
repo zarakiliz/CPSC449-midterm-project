@@ -4,7 +4,6 @@ from flask_mysqldb import MySQL
 from werkzeug.utils import secure_filename
 import jwt
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
 
 # To load the ennvrionment variables from the .env file
 load_dotenv()
@@ -73,7 +72,7 @@ def internal_server_error(e):
 
 # Authentication
 # login route to generate JWT token and create user model with username and password fields
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET'POST'])
 def login():
     if request.method == 'GET':
         # Serve the HTML login form
@@ -93,40 +92,35 @@ def login():
             </body>
             </html>
         '''
-    
     elif request.method == 'POST':
-        # Retrieve credentials from the form
-        username = request.form.get('username')
-        password = request.form.get('password')
+        # Check if JSON data is provided
+        if request.is_json:
+            auth = request.get_json()
+            username = auth.get('username')
+            password = auth.get('password')
+        else:
+            # Handle form data from an HTML form
+            username = request.form.get('username')
+            password = request.form.get('password')
 
         # Validate that username and password are provided
         if not username or not password:
             return jsonify({'message': 'Invalid credentials!'}), 400
 
-        # Query the database for the user
-        cursor = mysql.connection.cursor()
-        query = "SELECT * FROM users WHERE username = %s AND password = %s"
-        cursor.execute(query, (username, password))
-        user = cursor.fetchone()
-        cursor.close()
+    # Querying the database for the user
+    cursor = mysql.connection.cursor()
+    query = "SELECT * FROM users WHERE username = %s AND password = %s"
+    cursor.execute(query, (username, password))
+    user = cursor.fetchone()
+    cursor.close()
 
-        # Check if user is found
-        if user:
-            # Generate a JWT token with a 30-minute expiration time
-            token = jwt.encode(
-                {
-                    'username': user['username'],
-                    'exp': datetime.utcnow() + timedelta(minutes=30)  # Token expiration time
-                },
-                app.config['SECRET_KEY'],
-                algorithm='HS256'
-            )
-            return jsonify({
-                'message': f'Welcome, {username}! You have successfully logged in.',
-                'token': token
-            })
-        else:
-            return jsonify({'message': 'Invalid credentials!'}), 401
+    #Simple if conditons
+    if user:
+        token = jwt.encode({'usernamen': user['username']}, app.config['SECRET_KEY'], algorithm='HS256')
+        # username = data['username']
+        return jsonify({'message': f'Welcome, {username}! You have accessed the protected endpoint.'})
+    else:
+        return jsonify({"message:" f'Invalid Credentials!'}), 401
 
 # protected endpoint that requires a valid jwt token to access
 @app.route('/protected', methods=['GET'])
@@ -146,29 +140,29 @@ def protected():
         return jsonify({'message': 'Token has expired'}), 401
     except jwt.InvalidTokenError:
         return jsonify({'message': 'Invalid token'}), 401
-if __name__ == '__main__':
-    app.run(debug=True)
-    
+
 # File Handling 
 
-# #upload file
-# @app.route('/upload')
-# def upload():
-#     return '''
-#         <html>
-#         <form action="/sendFile" method="POST" enctype="multipart/form-data">
-#             <input type="file" name="file"/><br>
-#             <input type="submit"/>
-#         </form>
-#         </html>
-#     '''
+#upload file
+@app.route('/upload')
+def upload():
+    return '''
+        <html>
+        <form action="/sendFile" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file"/><br>
+            <input type="submit"/>
+        </form>
+        </html>
+    '''
 
-# @app.route('/sendFile', methods=['POST', 'GET'])
-# def sendFile():
-#     uploaded_file = request.files['file']
-#     if uploaded_file.filename != '':
-#         filename = secure_filename(uploaded_file.filename)
-#         if os.path.splitext(filename)[1] in app.config['extensions']:
-#             uploaded_file.save(os.path.join(app.config['UPLOADS'],filename))
-#             return 'correct'
-#     return ''
+@app.route('/sendFile', methods=['POST', 'GET'])
+def sendFile():
+    uploaded_file = request.files['file']
+    if uploaded_file.filename != '':
+        filename = secure_filename(uploaded_file.filename)
+        if os.path.splitext(filename)[1] in app.config['extensions']:
+            uploaded_file.save(os.path.join(app.config['UPLOADS'],filename))
+            return 'correct'
+    return ''
+if __name__ == '__main__':
+    app.run(debug=True)
