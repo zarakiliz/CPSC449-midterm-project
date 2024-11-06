@@ -103,6 +103,27 @@ def upLoadFile():
         files = os.listdir(app.config['UPLOAD_PATH'])
         return jsonify({'uploaded_files': files})
 
+ # Delete file route
+@app.route('/deleteFile', methods=['DELETE'])
+def delete_file():
+    data = request.json
+    filename = data.get('filename')
+
+    if not filename:
+        return jsonify({'error': 'No filename provided'}), 400
+
+    file_path = os.path.join(app.config['UPLOAD_PATH'], secure_filename(filename))
+
+    if not os.path.exists(file_path):
+        return jsonify({'error': 'File not found'}), 404
+
+    try:
+        os.remove(file_path)
+        return jsonify({'message': f'{filename} has been deleted successfully.'}), 200
+    except Exception as e:
+        return jsonify({'error': 'Could not delete the file', 'details': str(e)}), 500
+
+
 # Authentication
 # login route to generate JWT token for the user in MySQL to test via POSTMAN
 @app.route('/login', methods=['GET', 'POST'])
