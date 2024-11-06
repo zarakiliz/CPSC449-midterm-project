@@ -208,11 +208,14 @@ def protected():
     # Release in order to access proctected, we can do either through POSTMAN or through the endpoint via cookie
     # token = request.cookies.get('token') or request.headers.get('Authorization')\
     token = request.headers.get('Authorization')
-    if not token:
-        return jsonify({'message': 'Token is missing.'}), 401
+    if token and token.startswith("Bearer "):
+        token = token.split(" ")[1]
+    else:
+        # If not found in headers, look for it as a query parameter in the URL
+        token = request.args.get('token')
     # token = request. headers.get('Authorization')
-    if not token:
-        return jsonify({'message': 'Token is missing.'}), 401
+    # if not token:
+    #     return jsonify({'message': 'Token is missing.'}), 401
     
 
     #Keep this for now
