@@ -192,7 +192,7 @@ def protected():
     if token.startswith("Bearer "):
         token = token.split(" ")[1]
 
-    #Confirmed it works now
+    
     try:
         data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
         #To show in the 

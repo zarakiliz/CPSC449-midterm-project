@@ -157,17 +157,13 @@ def login():
                 algorithm='HS256'
             )
             #Testing to see if this works for uploading file
-            #Had to make this to a response in order to store the token in the cookie
-            #Why is debugging so hard
-            response = jsonify({
+            return jsonify({
                 'message': f'Welcome, {username}! You have successfully logged in.',
                 'token': token  #Token will be printed to copy and past into postman to test it out
                
             })
             #Storing the JWT token in a cookie to access the /protected endpoint via url
             response.set_cookie('token', token)
-            return response
-
         # If password is wrong
         else:
             return jsonify({'message': 'Invalid credentials!'}), 401
@@ -178,8 +174,8 @@ def login():
 @app.route('/protected', methods=['GET'])
 def protected():
 
-    # Release in order to access proctected, we can do either through POSTMAN or through the endpoint via cookie
-    token = request.cookies.get('token') or request.headers.get('Authorization')
+    # Retrieve token from header (Postman) or from URL parameter (browser access)
+    token = request.args.get('token') or request.headers.get('Authorization')
     if not token:
         return jsonify({'message': 'Token is missing.'}), 401
     # token = request. headers.get('Authorization')
@@ -192,7 +188,6 @@ def protected():
     if token.startswith("Bearer "):
         token = token.split(" ")[1]
 
-    #Confirmed it works now
     try:
         data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
         #To show in the 

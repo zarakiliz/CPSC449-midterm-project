@@ -1,0 +1,11 @@
+
+        # Checking if JSON data is provided 
+        # Retrieve credentials from the form
+        if request.is_json:
+            data = request.get_json()
+            username = data.get('username')
+            password = data.get('password')
+        else:
+            # Retrieve form data
+            username = request.form.get('username')
+            password = request.form.get('password')
