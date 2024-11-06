@@ -178,7 +178,7 @@ def login():
             token = jwt.encode(
                 {
                     'username': user['username'],
-                    'exp': datetime.utcnow() + timedelta(minutes=1)  # Token expiration time 1 to test out for 
+                    'exp': datetime.utcnow() + timedelta(minutes=2)  # Token expiration time 1 to test out for 
                 },
                 app.config['SECRET_KEY'],
                 algorithm='HS256'
