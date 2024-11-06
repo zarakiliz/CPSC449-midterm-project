@@ -16,7 +16,7 @@ app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 #limiting the size of uploaded fi
 app.config['UPLOAD_PATH'] = 'uploads'
 
 # MySQL configurations Testing
-app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
 app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
 app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', 'password')
 app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'flask_app')
