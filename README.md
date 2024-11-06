@@ -73,3 +73,6 @@ error handling, authentication, and file handling
      ```
    - The application should now be running locally on `http://127.0.0.1:5000`.
    - You can test the API endpoints using **Postman** or **cURL**. Make sure your MySQL server is running and that the `.env` file is configured correctly.
+
+# Video Demo
+https://drive.google.com/drive/folders/17zuni_x_MYUsTHVsLxuY4M-N5FEL4bQT?usp=sharing
