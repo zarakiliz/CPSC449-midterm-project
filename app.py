@@ -152,9 +152,13 @@ def login():
         # Checking if JSON data is provided 
         # Retrieve credentials from the form
         # Forgot to test for POST 
-        data = request.json
-        username = data.get('username')
-        password = data.get('password')
+        if request.is_json:
+            data = request.json
+            username = data.get('username')
+            password = data.get('password')
+        else:
+            username = request.form.get('username')
+            password = request.form.get('password')
 
         # Validate that username and password are provided
         if not username or not password:
